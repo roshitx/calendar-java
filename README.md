@@ -1,3 +1,2 @@
-# calendar-java
-
 # GUI Calendar with Java
+Java swing
