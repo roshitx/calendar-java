@@ -1,2 +1,9 @@
 # GUI Calendar with Java
-Java swing
+## Using Java swing
+--
+
+### Tools  :
+- IntelIJ
+- JDK 16.0
+- Java Library (Swing)
+- ChatGPT (for helping me out)
