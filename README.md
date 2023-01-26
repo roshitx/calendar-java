@@ -1,6 +1,5 @@
 # GUI Calendar with Java
 ## Using Java swing
---
 
 ### Tools  :
 - IntelIJ
