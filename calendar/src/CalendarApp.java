@@ -1,12 +1,14 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class CalendarApp {
-    static JLabel lblMonth, lblYear;
+    static JLabel lblMonth, lblYear, todayLabel;
     static JButton btnPrev, btnNext;
     static JTable tblCalendar;
     static JComboBox cmbYear;
@@ -28,14 +30,15 @@ public class CalendarApp {
 
         //Prepare frame
         frmMain = new JFrame ("Kalender"); //Create frame
-        frmMain.setSize(330, 375); //Set size to 400x400 pixels
+        frmMain.setIconImage(Toolkit.getDefaultToolkit().getImage("src/calendar-icon.png"));
+        frmMain.setSize(330, 375); //Set size
         pane = frmMain.getContentPane(); //Get content pane
         pane.setLayout(null); //Apply null layout
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close when X is clicked
 
         //Create controls
         lblMonth = new JLabel ("Januari");
-        lblYear = new JLabel ("Change year:");
+        lblYear = new JLabel ("Ganti tahun:");
         cmbYear = new JComboBox();
         btnPrev = new JButton ("<<");
         btnNext = new JButton (">>");
@@ -43,6 +46,10 @@ public class CalendarApp {
         tblCalendar = new JTable(mtblCalendar);
         stblCalendar = new JScrollPane(tblCalendar);
         pnlCalendar = new JPanel(null);
+        Date today = GregorianCalendar.getInstance().getTime(); /*Display today*/
+        todayLabel = new JLabel();
+        todayLabel.setText(String.valueOf(today));
+
 
         //Set border
         pnlCalendar.setBorder(BorderFactory.createTitledBorder("Kalender"));
@@ -61,7 +68,7 @@ public class CalendarApp {
         pnlCalendar.add(btnNext);
         pnlCalendar.add(stblCalendar);
 
-        //Set bounds
+        //Set position & scale
         pnlCalendar.setBounds(0, 0, 320, 335);
         lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
         lblYear.setBounds(10, 305, 80, 20);
@@ -79,7 +86,7 @@ public class CalendarApp {
         realDay = cal.get(GregorianCalendar.DAY_OF_MONTH); //Get day
         realMonth = cal.get(GregorianCalendar.MONTH); //Get month
         realYear = cal.get(GregorianCalendar.YEAR); //Get year
-        currentMonth = realMonth; //Match month and year
+        currentMonth = realMonth; // Match month & year
         currentYear = realYear;
 
         //Add headers
@@ -91,8 +98,8 @@ public class CalendarApp {
         tblCalendar.getParent().setBackground(tblCalendar.getBackground()); //Set background
 
         //No resize/reorder
-        tblCalendar.getTableHeader().setResizingAllowed(false);
-        tblCalendar.getTableHeader().setReorderingAllowed(false);
+        tblCalendar.getTableHeader().setResizingAllowed(true);
+        tblCalendar.getTableHeader().setReorderingAllowed(true);
 
         //Single cell selection
         tblCalendar.setColumnSelectionAllowed(true);
@@ -113,19 +120,27 @@ public class CalendarApp {
         refreshCalendar (realMonth, realYear); //Refresh calendar
     }
 
+
     public static void refreshCalendar(int month, int year){
-        //Variables
-        String[] months =  {"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
-        int nod, som; //Number Of Days, Start Of Month
+        // inisiasi variables
+        String[] months =  {"Januari", "Februari", "Maret", "April",
+                            "Mei", "Juni", "Juli", "Agustus", "September",
+                            "Oktober", "November", "Desember"};
+        int nod, som; //Number of Days, Start of Month
 
         //Allow/disallow buttons
-        btnPrev.setEnabled(true);
-        btnNext.setEnabled(true);
-        if (month == 0 && year <= realYear-10){btnPrev.setEnabled(false);} //Too early
-        if (month == 11 && year >= realYear+100){btnNext.setEnabled(false);} //Too late
-        lblMonth.setText(months[month]); //Refresh the month label (at the top)
-        lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 180, 25); //Re-align label with calendar
-        cmbYear.setSelectedItem(String.valueOf(year)); //Select the correct year in the combo box
+            btnPrev.setEnabled(true);
+            btnNext.setEnabled(true);
+        //Change year when btnPrev in Januari
+            if (month == 0 && year <= realYear-10){btnPrev.setEnabled(false);}
+        //Change year when btnNext in Desember
+            if (month == 11 && year >= realYear+100){btnNext.setEnabled(false);}
+        //Refresh the month label (at the top)
+            lblMonth.setText(months[month]);
+        //Re-align label with calendar
+            lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 180, 25);
+        //Select the correct year in the combo box
+            cmbYear.setSelectedItem(String.valueOf(year));
 
         //Clear table
         for (int i=0; i<6; i++){
@@ -153,15 +168,15 @@ public class CalendarApp {
     static class tblCalendarRenderer extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
             super.getTableCellRendererComponent(table, value, selected, focused, row, column);
-            if (column == 0 || column == 6){ //Week-end
-                setBackground(new Color(255, 220, 220));
+            if (column == 0 ){ //Week-end
+                setBackground(new Color(236, 122, 122));
             }
-            else{ //Week
+            else { //Week
                 setBackground(new Color(255, 255, 255));
             }
             if (value != null){
                 if (Integer.parseInt(value.toString()) == realDay && currentMonth == realMonth && currentYear == realYear){ //Today
-                    setBackground(new Color(220, 220, 255));
+                    setBackground(new Color(190, 190, 255));
                 }
             }
             setBorder(null);
